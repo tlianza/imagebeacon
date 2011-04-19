@@ -44,6 +44,7 @@ function insertHttpRequest(req, beaconId, visitorId, callback)
 							    userAgent:req.headers['user-agent'], 
 							    referrer:req.headers['referer'], 
 							    host:req.headers['host'], 
+							    ip: req.connection.remoteAddress,
 							    cTime: d,
 							    cDay: day,
 							    cHour: h,
