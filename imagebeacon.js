@@ -4,11 +4,11 @@ var sys = require("sys"),
 	http = require('http'),
 	haml = require('hamljs'),
 	uuid = require('node-uuid'),
-	Db = require('node-mongodb-native/lib/mongodb').Db,
-	Connection = require('node-mongodb-native/lib/mongodb').Connection,
-	Server = require('node-mongodb-native/lib/mongodb').Server,
+	Db = require('mongodb/lib/mongodb').Db,
+	Connection = require('mongodb/lib/mongodb').Connection,
+	Server = require('mongodb/lib/mongodb').Server,
 	// BSON = require('../lib/mongodb').BSONPure;
-	BSON = require('node-mongodb-native/lib/mongodb').BSONNative;
+	BSON = require('mongodb/lib/mongodb').BSONNative;
 
 var COLLECTION_NAME='http_request';
 
