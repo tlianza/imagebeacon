@@ -55,12 +55,26 @@ function insertHttpRequest(req, beaconId, visitorId, callback)
 
 function displayStats(beaconId, req, res) {
 	res.writeHead(200, {'Content-Type': 'text/html'});
+	var d = new Date();
+	var day = Date.UTC(d.getFullYear(), d.getMonth(), d.getDate());
+	var h = d.getUTCHours();
+			
 	fs.readFile('./templates/stats.haml', function(e, c) {
-	    var data = {
-			beaconId: beaconId
-		};
-	    var html = haml.render(c.toString(), {locals: data});
-	    res.end(html);
+		getConnection(function(err, client) {
+			client.collection(COLLECTION_NAME, function(err, collection) {
+				collection.find({'beaconId': beaconId}).count(function(err, totalHits) {
+					collection.find({'beaconId': beaconId, 'cDay': day}).count(function(err, hitsToday) {
+					    var data = {
+							beaconId: beaconId,
+							totalHits: totalHits,
+							hitsToday: hitsToday
+						};
+					    var html = haml.render(c.toString(), {locals: data});
+					    res.end(html);
+					});
+			    });
+			});
+		});
 	});
 }
 
