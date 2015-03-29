@@ -56,21 +56,36 @@ function insertHttpRequest(req, beaconId, visitorId, callback)
 function displayStats(beaconId, req, res) {
 	res.writeHead(200, {'Content-Type': 'text/html'});
 	var d = new Date();
-	var day = Date.UTC(d.getFullYear(), d.getMonth(), d.getDate());
+	var today = Date.UTC(d.getFullYear(), d.getMonth(), d.getDate());
 	var h = d.getUTCHours();
-			
+	var last30 = new Date(); last30.setDate(last30.getDate()-30);
+	
 	fs.readFile('./templates/stats.haml', function(e, c) {
 		getConnection(function(err, client) {
 			client.collection(COLLECTION_NAME, function(err, collection) {
 				collection.find({'beaconId': beaconId}).count(function(err, totalHits) {
-					collection.find({'beaconId': beaconId, 'cDay': day}).count(function(err, hitsToday) {
-					    var data = {
+					collection.group(
+						 ['cDay']
+						,{'beaconId': beaconId, 'cTime': {'$gte':last30}} 
+						,{hits: 0}
+						,function(doc, out) { out.hits++; }
+						,true
+					  , function(err, hitsByDay) {
+					    for(var i=0; i < hitsByDay.length; i++)
+							{
+								console.log(typeof(hitsByDay[i].cDay));
+								hitsByDay[i].day = new Date();
+							  hitsByDay[i].day.setDate(hitsByDay[i].cDay);	
+							}
+							var data = {
 							beaconId: beaconId,
 							totalHits: totalHits,
-							hitsToday: hitsToday
+							hitsByDay: hitsByDay
 						};
-					    var html = haml.render(c.toString(), {locals: data});
-					    res.end(html);
+						sys.puts("Hits by day:");
+						console.log(hitsByDay);
+					  var html = haml.render(c.toString(), {locals: data});
+					  res.end(html);
 					});
 			    });
 			});

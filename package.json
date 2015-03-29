@@ -1,0 +1,5 @@
+{ "name" :            "imagebeacon"
+, "description" :     "A tracking pixel server"
+, "version" :         "0.0.1"
+, "engines" :       { "node" : ">=0.4.0" }
+}
